@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:forgeview="http://jboss.org/forge/view"
+	template="/resources/scaffold/pageTemplate.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="page" value='#{eventsBean.page}'/>
+		<f:event type="preRenderView" listener='#{eventsBean.paginate}'/>
+	</f:metadata>
+
+	<ui:param name="pageTitle" value="Search Events entities"/>
+
+	<ui:define name="header">
+		Events
+	</ui:define>
+
+	<ui:define name="subheader">
+		Search Events entities
+	</ui:define>
+
+	<ui:define name="footer"/>
+
+	<ui:define name="main">
+		<h:form id="search">
+			<f:validateBean disabled="true">
+				<h:panelGroup styleClass="search">
+
+					<h:panelGrid columnClasses="label,component,required" columns="3">
+						<h:outputLabel for="eventsBeanExampleName" value="Name:"/>
+						<h:panelGroup>
+							<h:inputText id="eventsBeanExampleName" maxLength="150" value="#{eventsBean.example.name}"/>
+							<h:message for="eventsBeanExampleName" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+						<h:outputLabel for="eventsBeanExampleAbout" value="About:"/>
+						<h:panelGroup>
+							<h:inputTextarea id="eventsBeanExampleAbout" value="#{eventsBean.example.about}"/>
+							<h:message for="eventsBeanExampleAbout" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+						<h:outputLabel for="eventsBeanExampleType" value="Type:"/>
+						<h:panelGroup>
+							<h:selectOneMenu converter="#{typBean.converter}" id="eventsBeanExampleType" value="#{eventsBean.example.type}">
+								<f:selectItem/>
+								<f:selectItems itemLabel="#{forgeview:display(_item)}" itemValue="#{_item}" value="#{typBean.all}" var="_item"/>
+							</h:selectOneMenu>
+							<h:message for="eventsBeanExampleType" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+					</h:panelGrid>
+					<h:panelGroup styleClass="buttons">
+						<h:commandLink value="Search" action='#{eventsBean.search}' styleClass="btn btn-primary"/>
+						<h:commandLink value="Create New" action='#{eventsBean.create}' styleClass="btn btn-primary"/>
+					</h:panelGroup>
+				</h:panelGroup>
+			</f:validateBean>
+			
+			<h:dataTable id="eventsBeanPageItems" styleClass="data-table" value="#{eventsBean.pageItems}" var="_item">
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Name"/>
+					</f:facet>
+					<h:link outcome="/events/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="_itemName" value="#{_item.name}"/>
+					</h:link>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="About"/>
+					</f:facet>
+					<h:link outcome="/events/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:inputTextarea id="_itemAbout" value="#{_item.about}"/>
+					</h:link>
+				</h:column>
+			</h:dataTable>
+			<ui:include src="/resources/scaffold/paginator.xhtml">
+				<ui:param name="paginatorBean" value='#{eventsBean}'/>
+			</ui:include>
+		</h:form>
+			
+	</ui:define>
+
+</ui:composition>

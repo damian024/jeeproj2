@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/resources/scaffold/pageTemplate.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="id" value='#{sponsorBean.id}'/>
+		<f:event type="preRenderView" listener='#{sponsorBean.retrieve}'/>
+	</f:metadata>
+
+	<ui:param name="pageTitle" value="Create Sponsor"/>
+
+	<ui:define name="header">
+		Sponsor
+	</ui:define>
+
+	<ui:define name="subheader">
+		<c:choose>
+			<c:when test='#{!empty sponsorBean.id}'>
+				Edit existing Sponsor
+			</c:when>
+			<c:otherwise>
+				Create a new Sponsor
+			</c:otherwise>
+		</c:choose>
+	</ui:define>
+
+	<ui:define name="footer"/>
+
+	<ui:define name="main">
+		<h:form id="create">
+			<h:messages globalOnly="true" styleClass="error"/>
+
+			<h:panelGrid columnClasses="label,component,required" columns="3">
+				<h:outputLabel for="sponsorBeanSponsorName" value="Name:"/>
+				<h:panelGroup>
+					<h:inputText id="sponsorBeanSponsorName" maxLength="100" value="#{sponsorBean.sponsor.name}"/>
+					<h:message for="sponsorBeanSponsorName" styleClass="error"/>
+				</h:panelGroup>
+				<h:outputText/>
+				<h:outputLabel for="sponsorBeanSponsorAbout" value="About:"/>
+				<h:panelGroup>
+					<h:inputTextarea id="sponsorBeanSponsorAbout" value="#{sponsorBean.sponsor.about}"/>
+					<h:message for="sponsorBeanSponsorAbout" styleClass="error"/>
+				</h:panelGroup>
+				<h:outputText/>
+				<h:outputLabel for="sponsorBeanSponsorNip" value="Nip:"/>
+				<h:panelGroup>
+					<h:inputText id="sponsorBeanSponsorNip" maxLength="25" value="#{sponsorBean.sponsor.nip}"/>
+					<h:message for="sponsorBeanSponsorNip" styleClass="error"/>
+				</h:panelGroup>
+				<h:outputText/>
+				<h:outputLabel for="sponsorBeanSponsorRegon" value="Regon:"/>
+				<h:panelGroup>
+					<h:inputText id="sponsorBeanSponsorRegon" maxLength="25" value="#{sponsorBean.sponsor.regon}"/>
+					<h:message for="sponsorBeanSponsorRegon" styleClass="error"/>
+				</h:panelGroup>
+				<h:outputText/>
+			</h:panelGrid>
+
+			<div class="buttons">
+				<h:commandLink value="Save" action='#{sponsorBean.update}' styleClass="btn btn-primary"/>
+				<c:choose>
+					<c:when test='#{!empty sponsorBean.id}'>
+						<h:link value="Cancel" outcome="view" styleClass="btn btn-primary">
+							<f:param name="id" value='#{sponsorBean.id}'/>
+						</h:link>
+						<h:commandLink value="Delete" action='#{sponsorBean.delete}' styleClass="btn btn-primary"/>
+					</c:when>
+					<c:otherwise>
+						<h:link value="Cancel" outcome="search" styleClass="btn btn-primary"/>
+					</c:otherwise>
+				</c:choose>
+			</div>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

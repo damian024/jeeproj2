@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:forgeview="http://jboss.org/forge/view"
+	template="/resources/scaffold/pageTemplate.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="id" value='#{eventsBean.id}'/>
+		<f:event type="preRenderView" listener='#{eventsBean.retrieve}'/>
+	</f:metadata>
+
+	<ui:param name="pageTitle" value="View Events"/>
+
+	<ui:define name="header">
+		Events
+	</ui:define>
+
+	<ui:define name="subheader">
+		View existing Events
+	</ui:define>
+
+	<ui:define name="footer"/>
+
+	<ui:define name="main">
+		<h:panelGrid columnClasses="label,component,required" columns="3">
+			<h:outputLabel for="eventsBeanEventsName" value="Name:"/>
+			<h:outputText id="eventsBeanEventsName" value="#{eventsBean.events.name}"/>
+			<h:outputText/>
+			<h:outputLabel for="eventsBeanEventsAbout" value="About:"/>
+			<h:inputTextarea id="eventsBeanEventsAbout" value="#{eventsBean.events.about}"/>
+			<h:outputText/>
+			<h:outputLabel for="eventsBeanEventsType" value="Type:"/>
+			<h:link id="eventsBeanEventsType" outcome="/typ/view" rendered="#{!empty eventsBean.events.type}" value="#{eventsBean.events.type}">
+				<f:param name="id" value="#{eventsBean.events.type.id}"/>
+			</h:link>
+			<h:outputText/>
+			<h:outputLabel for="eventsBeanEventsSponsor" value="Sponsor:"/>
+			<h:dataTable id="eventsBeanEventsSponsor" styleClass="data-table" value="#{forgeview:asList(eventsBean.events.sponsor)}" var="_item">
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Name"/>
+					</f:facet>
+					<h:link outcome="/sponsor/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="_itemName" value="#{_item.name}"/>
+					</h:link>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="About"/>
+					</f:facet>
+					<h:link outcome="/sponsor/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:inputTextarea id="_itemAbout" value="#{_item.about}"/>
+					</h:link>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Nip"/>
+					</f:facet>
+					<h:link outcome="/sponsor/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="_itemNip" value="#{_item.nip}"/>
+					</h:link>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Regon"/>
+					</f:facet>
+					<h:link outcome="/sponsor/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="_itemRegon" value="#{_item.regon}"/>
+					</h:link>
+				</h:column>
+			</h:dataTable>
+			<h:outputText/>
+		</h:panelGrid>
+
+		<div class="buttons">
+			<h:link value="View All" outcome="search" styleClass="btn btn-primary"/> 
+			<h:link value="Edit" outcome="create" includeViewParams="true" styleClass="btn btn-primary"/>
+			<h:link value="Create New" outcome="create" styleClass="btn btn-primary"/>
+		</div>
+	</ui:define>
+
+</ui:composition>
