@@ -9,23 +9,23 @@
 	template="/resources/scaffold/pageTemplate.xhtml">
 
 	<f:metadata>
-		<f:viewParam name="id" value='#{eventsBean.id}'/>
-		<f:event type="preRenderView" listener='#{eventsBean.retrieve}'/>
+		<f:viewParam name="id" value='#{eventBean.id}'/>
+		<f:event type="preRenderView" listener='#{eventBean.retrieve}'/>
 	</f:metadata>
 
-	<ui:param name="pageTitle" value="Create Events"/>
+	<ui:param name="pageTitle" value="Create Event"/>
 
 	<ui:define name="header">
-		Events
+		Event
 	</ui:define>
 
 	<ui:define name="subheader">
 		<c:choose>
-			<c:when test='#{!empty eventsBean.id}'>
-				Edit existing Events
+			<c:when test='#{!empty eventBean.id}'>
+				Edit existing Event
 			</c:when>
 			<c:otherwise>
-				Create a new Events
+				Create a new Event
 			</c:otherwise>
 		</c:choose>
 	</ui:define>
@@ -37,31 +37,22 @@
 			<h:messages globalOnly="true" styleClass="error"/>
 
 			<h:panelGrid columnClasses="label,component,required" columns="3">
-				<h:outputLabel for="eventsBeanEventsName" value="Name:"/>
+				<h:outputLabel for="eventBeanEventName" value="Name:"/>
 				<h:panelGroup>
-					<h:inputText id="eventsBeanEventsName" maxLength="150" required="true" value="#{eventsBean.events.name}"/>
-					<h:message for="eventsBeanEventsName" styleClass="error"/>
+					<h:inputText id="eventBeanEventName" maxLength="100" required="true" value="#{eventBean.event.name}"/>
+					<h:message for="eventBeanEventName" styleClass="error"/>
 				</h:panelGroup>
 				<h:outputText value="*"/>
-				<h:outputLabel for="eventsBeanEventsAbout" value="About:"/>
+				<h:outputLabel for="eventBeanEventAbout" value="About:"/>
 				<h:panelGroup>
-					<h:inputTextarea id="eventsBeanEventsAbout" required="true" value="#{eventsBean.events.about}"/>
-					<h:message for="eventsBeanEventsAbout" styleClass="error"/>
+					<h:inputTextarea id="eventBeanEventAbout" required="true" value="#{eventBean.event.about}"/>
+					<h:message for="eventBeanEventAbout" styleClass="error"/>
 				</h:panelGroup>
 				<h:outputText value="*"/>
-				<h:outputLabel for="eventsBeanEventsType" value="Type:"/>
+				<h:outputLabel for="eventBeanEventSponors" value="Sponors:"/>
 				<h:panelGroup>
-					<h:selectOneMenu converter="#{typBean.converter}" id="eventsBeanEventsType" value="#{eventsBean.events.type}">
-						<f:selectItem/>
-						<f:selectItems itemLabel="#{forgeview:display(_item)}" itemValue="#{_item}" value="#{typBean.all}" var="_item"/>
-					</h:selectOneMenu>
-					<h:message for="eventsBeanEventsType" styleClass="error"/>
-				</h:panelGroup>
-				<h:outputText/>
-				<h:outputLabel for="eventsBeanEventsSponsor" value="Sponsor:"/>
-				<h:panelGroup>
-					<ui:param name="_collection" value="#{eventsBean.events.sponsor}"/>
-					<h:dataTable id="eventsBeanEventsSponsor" styleClass="data-table" value="#{forgeview:asList(_collection)}" var="_item">
+					<ui:param name="_collection" value="#{eventBean.event.sponors}"/>
+					<h:dataTable id="eventBeanEventSponors" styleClass="data-table" value="#{forgeview:asList(_collection)}" var="_item">
 						<h:column>
 							<f:facet name="header">
 								<h:outputText value="Name"/>
@@ -103,24 +94,33 @@
 						</h:column>
 					</h:dataTable>
 					<h:panelGrid columnClasses=",remove-column" columns="2" styleClass="data-table-footer">
-						<h:selectOneMenu converter="#{sponsorBean.converter}" id="eventsBeanEventsSponsorSelect" value="#{requestScope['eventsBeanEventsSponsorSelect']}">
+						<h:selectOneMenu converter="#{sponsorBean.converter}" id="eventBeanEventSponorsSelect" value="#{requestScope['eventBeanEventSponorsSelect']}">
 							<f:selectItem/>
 							<f:selectItems itemLabel="#{forgeview:display(_item)}" itemValue="#{_item}" value="#{sponsorBean.all}" var="_item"/>
 						</h:selectOneMenu>
-						<h:commandLink action="#{_collection.add(requestScope['eventsBeanEventsSponsorSelect'])}" id="eventsBeanEventsSponsorAdd" onclick="if (document.getElementById(document.forms[0].id+':eventsBeanEventsSponsorSelect').selectedIndex &lt; 1) { alert('Must select a Sponsor'); return false; }" styleClass="add-button"/>
+						<h:commandLink action="#{_collection.add(requestScope['eventBeanEventSponorsSelect'])}" id="eventBeanEventSponorsAdd" onclick="if (document.getElementById(document.forms[0].id+':eventBeanEventSponorsSelect').selectedIndex &lt; 1) { alert('Must select a Sponsor'); return false; }" styleClass="add-button"/>
 					</h:panelGrid>
+				</h:panelGroup>
+				<h:outputText/>
+				<h:outputLabel for="eventBeanEventType" value="Type:"/>
+				<h:panelGroup>
+					<h:selectOneMenu converter="#{typBean.converter}" id="eventBeanEventType" value="#{eventBean.event.type}">
+						<f:selectItem/>
+						<f:selectItems itemLabel="#{forgeview:display(_item)}" itemValue="#{_item}" value="#{typBean.all}" var="_item"/>
+					</h:selectOneMenu>
+					<h:message for="eventBeanEventType" styleClass="error"/>
 				</h:panelGroup>
 				<h:outputText/>
 			</h:panelGrid>
 
 			<div class="buttons">
-				<h:commandLink value="Save" action='#{eventsBean.update}' styleClass="btn btn-primary"/>
+				<h:commandLink value="Save" action='#{eventBean.update}' styleClass="btn btn-primary"/>
 				<c:choose>
-					<c:when test='#{!empty eventsBean.id}'>
+					<c:when test='#{!empty eventBean.id}'>
 						<h:link value="Cancel" outcome="view" styleClass="btn btn-primary">
-							<f:param name="id" value='#{eventsBean.id}'/>
+							<f:param name="id" value='#{eventBean.id}'/>
 						</h:link>
-						<h:commandLink value="Delete" action='#{eventsBean.delete}' styleClass="btn btn-primary"/>
+						<h:commandLink value="Delete" action='#{eventBean.delete}' styleClass="btn btn-primary"/>
 					</c:when>
 					<c:otherwise>
 						<h:link value="Cancel" outcome="search" styleClass="btn btn-primary"/>

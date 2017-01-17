@@ -8,37 +8,32 @@
 	template="/resources/scaffold/pageTemplate.xhtml">
 
 	<f:metadata>
-		<f:viewParam name="id" value='#{eventsBean.id}'/>
-		<f:event type="preRenderView" listener='#{eventsBean.retrieve}'/>
+		<f:viewParam name="id" value='#{eventBean.id}'/>
+		<f:event type="preRenderView" listener='#{eventBean.retrieve}'/>
 	</f:metadata>
 
-	<ui:param name="pageTitle" value="View Events"/>
+	<ui:param name="pageTitle" value="View Event"/>
 
 	<ui:define name="header">
-		Events
+		Event
 	</ui:define>
 
 	<ui:define name="subheader">
-		View existing Events
+		View existing Event
 	</ui:define>
 
 	<ui:define name="footer"/>
 
 	<ui:define name="main">
 		<h:panelGrid columnClasses="label,component,required" columns="3">
-			<h:outputLabel for="eventsBeanEventsName" value="Name:"/>
-			<h:outputText id="eventsBeanEventsName" value="#{eventsBean.events.name}"/>
+			<h:outputLabel for="eventBeanEventName" value="Name:"/>
+			<h:outputText id="eventBeanEventName" value="#{eventBean.event.name}"/>
 			<h:outputText/>
-			<h:outputLabel for="eventsBeanEventsAbout" value="About:"/>
-			<h:inputTextarea id="eventsBeanEventsAbout" value="#{eventsBean.events.about}"/>
+			<h:outputLabel for="eventBeanEventAbout" value="About:"/>
+			<h:inputTextarea id="eventBeanEventAbout" value="#{eventBean.event.about}"/>
 			<h:outputText/>
-			<h:outputLabel for="eventsBeanEventsType" value="Type:"/>
-			<h:link id="eventsBeanEventsType" outcome="/typ/view" rendered="#{!empty eventsBean.events.type}" value="#{eventsBean.events.type}">
-				<f:param name="id" value="#{eventsBean.events.type.id}"/>
-			</h:link>
-			<h:outputText/>
-			<h:outputLabel for="eventsBeanEventsSponsor" value="Sponsor:"/>
-			<h:dataTable id="eventsBeanEventsSponsor" styleClass="data-table" value="#{forgeview:asList(eventsBean.events.sponsor)}" var="_item">
+			<h:outputLabel for="eventBeanEventSponors" value="Sponors:"/>
+			<h:dataTable id="eventBeanEventSponors" styleClass="data-table" value="#{forgeview:asList(eventBean.event.sponors)}" var="_item">
 				<h:column>
 					<f:facet name="header">
 						<h:outputText value="Name"/>
@@ -76,6 +71,11 @@
 					</h:link>
 				</h:column>
 			</h:dataTable>
+			<h:outputText/>
+			<h:outputLabel for="eventBeanEventType" value="Type:"/>
+			<h:link id="eventBeanEventType" outcome="/typ/view" rendered="#{!empty eventBean.event.type}" value="#{eventBean.event.type}">
+				<f:param name="id" value="#{eventBean.event.type.id}"/>
+			</h:link>
 			<h:outputText/>
 		</h:panelGrid>
 

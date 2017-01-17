@@ -1,6 +1,7 @@
 package org.EventMgr.rest;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -19,31 +20,34 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.EventMgr.model.Event;
+import org.EventMgr.model.Sponsor;
+
 import javax.ws.rs.core.UriBuilder;
-import org.EventMgr.model.Events;
 
 /**
  * 
  */
 @Stateless
 @Path("/events")
-public class EventsEndpoint {
+public class EventEndpoint {
 	@PersistenceContext(unitName = "EventMgr-persistence-unit")
 	private EntityManager em;
 
 	@POST
 	@Consumes("application/json")
-	public Response create(Events entity) {
+	public Response create(Event entity) {
 		em.persist(entity);
 		return Response.created(
-				UriBuilder.fromResource(EventsEndpoint.class)
+				UriBuilder.fromResource(EventEndpoint.class)
 						.path(String.valueOf(entity.getId())).build()).build();
 	}
 
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")
 	public Response deleteById(@PathParam("id") Long id) {
-		Events entity = em.find(Events.class, id);
+		Event entity = em.find(Event.class, id);
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
@@ -55,12 +59,12 @@ public class EventsEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces("application/json")
 	public Response findById(@PathParam("id") Long id) {
-		TypedQuery<Events> findByIdQuery = em
+		TypedQuery<Event> findByIdQuery = em
 				.createQuery(
-						"SELECT DISTINCT e FROM Events e LEFT JOIN FETCH e.Type LEFT JOIN FETCH e.Sponsor WHERE e.id = :entityId ORDER BY e.id",
-						Events.class);
+						"SELECT DISTINCT e FROM Event e LEFT JOIN FETCH e.Sponors LEFT JOIN FETCH e.Type WHERE e.id = :entityId ORDER BY e.id",
+						Event.class);
 		findByIdQuery.setParameter("entityId", id);
-		Events entity;
+		Event entity;
 		try {
 			entity = findByIdQuery.getSingleResult();
 		} catch (NoResultException nre) {
@@ -74,26 +78,26 @@ public class EventsEndpoint {
 
 	@GET
 	@Produces("application/json")
-	public List<Events> listAll(@QueryParam("start") Integer startPosition,
+	public List<Event> listAll(@QueryParam("start") Integer startPosition,
 			@QueryParam("max") Integer maxResult) {
-		TypedQuery<Events> findAllQuery = em
+		TypedQuery<Event> findAllQuery = em
 				.createQuery(
-						"SELECT DISTINCT e FROM Events e LEFT JOIN FETCH e.Type LEFT JOIN FETCH e.Sponsor ORDER BY e.id",
-						Events.class);
+						"SELECT DISTINCT e FROM Event e LEFT JOIN FETCH e.Sponors LEFT JOIN FETCH e.Type ORDER BY e.id",
+						Event.class);
 		if (startPosition != null) {
 			findAllQuery.setFirstResult(startPosition);
 		}
 		if (maxResult != null) {
 			findAllQuery.setMaxResults(maxResult);
 		}
-		final List<Events> results = findAllQuery.getResultList();
+		final List<Event> results = findAllQuery.getResultList();
 		return results;
 	}
 
 	@PUT
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
-	public Response update(@PathParam("id") Long id, Events entity) {
+	public Response update(@PathParam("id") Long id, Event entity) {
 		if (entity == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
@@ -103,7 +107,7 @@ public class EventsEndpoint {
 		if (!id.equals(entity.getId())) {
 			return Response.status(Status.CONFLICT).entity(entity).build();
 		}
-		if (em.find(Events.class, id) == null) {
+		if (em.find(Event.class, id) == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
 		try {
@@ -114,5 +118,40 @@ public class EventsEndpoint {
 		}
 
 		return Response.noContent().build();
+	}
+	
+	@POST
+	@Path("/getByName")
+	@Produces("application/json")
+	public List<Event> findByName(@QueryParam("name") String name) {
+		TypedQuery<Event> findByIdQuery = em
+				.createQuery(
+						"SELECT DISTINCT e FROM Event e WHERE e.Name LIKE :entityId ORDER BY e.Name ASC",
+						Event.class);
+		findByIdQuery.setParameter("entityId", name);
+		final List<Event> results = findByIdQuery.getResultList();
+		return results;
+
+	}
+	
+	@GET
+	@Path("/getSponsors")
+	@Produces("application/json")
+	public Set<Sponsor> getSponsors(@QueryParam("id") Long id) {
+		TypedQuery<Event> findByIdQuery = em
+				.createQuery(
+						"SELECT DISTINCT e FROM Event e LEFT JOIN FETCH e.Sponors LEFT JOIN FETCH e.Type WHERE e.id = :entityId ORDER BY e.id",
+						Event.class);
+		findByIdQuery.setParameter("entityId", id);
+		Event entity;
+		try {
+			entity = findByIdQuery.getSingleResult();
+		} catch (NoResultException nre) {
+			entity = null;
+		}
+		if (entity == null) {
+			return null;
+		}
+		return entity.getSponors();
 	}
 }

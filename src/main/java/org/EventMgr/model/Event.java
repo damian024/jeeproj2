@@ -7,18 +7,21 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Version;
-import javax.xml.bind.annotation.XmlRootElement;
-import org.EventMgr.model.Typ;
-import javax.persistence.ManyToOne;
-import javax.persistence.CascadeType;
-import org.EventMgr.model.Sponsor;
+
 import java.util.Set;
 import java.util.HashSet;
 import javax.persistence.ManyToMany;
+import javax.persistence.FetchType;
+import javax.persistence.CascadeType;
+import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.EventMgr.model.Sponsor;
+import org.EventMgr.model.Typ;
 
 @Entity
 @XmlRootElement
-public class Events implements Serializable {
+public class Event implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -29,17 +32,17 @@ public class Events implements Serializable {
 	@Column(name = "version")
 	private int version;
 
-	@Column(length = 150, nullable = false)
+	@Column(length = 100, nullable = false)
 	private String Name;
 
 	@Column(length = 1000, nullable = false)
 	private String About;
 
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	private Set<Sponsor> Sponors = new HashSet<Sponsor>();
+
 	@ManyToOne(cascade = CascadeType.DETACH)
 	private Typ Type;
-
-	@ManyToMany
-	private Set<Sponsor> Sponsor = new HashSet<Sponsor>();
 
 	public Long getId() {
 		return this.id;
@@ -62,10 +65,10 @@ public class Events implements Serializable {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof Events)) {
+		if (!(obj instanceof Event)) {
 			return false;
 		}
-		Events other = (Events) obj;
+		Event other = (Event) obj;
 		if (id != null) {
 			if (!id.equals(other.id)) {
 				return false;
@@ -111,19 +114,19 @@ public class Events implements Serializable {
 		return result;
 	}
 
+	public Set<Sponsor> getSponors() {
+		return this.Sponors;
+	}
+
+	public void setSponors(final Set<Sponsor> Sponors) {
+		this.Sponors = Sponors;
+	}
+
 	public Typ getType() {
 		return this.Type;
 	}
 
 	public void setType(final Typ Type) {
 		this.Type = Type;
-	}
-
-	public Set<Sponsor> getSponsor() {
-		return this.Sponsor;
-	}
-
-	public void setSponsor(final Set<Sponsor> Sponsor) {
-		this.Sponsor = Sponsor;
 	}
 }

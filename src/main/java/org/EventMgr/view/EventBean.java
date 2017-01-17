@@ -24,13 +24,13 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.EventMgr.model.Events;
+import org.EventMgr.model.Event;
 import org.EventMgr.model.Typ;
 
 /**
- * Backing bean for Events entities.
+ * Backing bean for Event entities.
  * <p/>
- * This class provides CRUD functionality for all Events entities. It focuses
+ * This class provides CRUD functionality for all Event entities. It focuses
  * purely on Java EE 6 standards (e.g. <tt>&#64;ConversationScoped</tt> for
  * state management, <tt>PersistenceContext</tt> for persistence,
  * <tt>CriteriaBuilder</tt> for searches) rather than introducing a CRUD
@@ -40,12 +40,12 @@ import org.EventMgr.model.Typ;
 @Named
 @Stateful
 @ConversationScoped
-public class EventsBean implements Serializable {
+public class EventBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	/*
-	 * Support creating and retrieving Events entities
+	 * Support creating and retrieving Event entities
 	 */
 
 	private Long id;
@@ -58,14 +58,14 @@ public class EventsBean implements Serializable {
 		this.id = id;
 	}
 
-	private Events events;
+	private Event event;
 
-	public Events getEvents() {
-		return this.events;
+	public Event getEvent() {
+		return this.event;
 	}
 
-	public void setEvents(Events events) {
-		this.events = events;
+	public void setEvent(Event event) {
+		this.event = event;
 	}
 
 	@Inject
@@ -93,19 +93,19 @@ public class EventsBean implements Serializable {
 		}
 
 		if (this.id == null) {
-			this.events = this.example;
+			this.event = this.example;
 		} else {
-			this.events = findById(getId());
+			this.event = findById(getId());
 		}
 	}
 
-	public Events findById(Long id) {
+	public Event findById(Long id) {
 
-		return this.entityManager.find(Events.class, id);
+		return this.entityManager.find(Event.class, id);
 	}
 
 	/*
-	 * Support updating and deleting Events entities
+	 * Support updating and deleting Event entities
 	 */
 
 	public String update() {
@@ -113,11 +113,11 @@ public class EventsBean implements Serializable {
 
 		try {
 			if (this.id == null) {
-				this.entityManager.persist(this.events);
+				this.entityManager.persist(this.event);
 				return "search?faces-redirect=true";
 			} else {
-				this.entityManager.merge(this.events);
-				return "view?faces-redirect=true&id=" + this.events.getId();
+				this.entityManager.merge(this.event);
+				return "view?faces-redirect=true&id=" + this.event.getId();
 			}
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null,
@@ -130,7 +130,7 @@ public class EventsBean implements Serializable {
 		this.conversation.end();
 
 		try {
-			Events deletableEntity = findById(getId());
+			Event deletableEntity = findById(getId());
 
 			this.entityManager.remove(deletableEntity);
 			this.entityManager.flush();
@@ -143,14 +143,14 @@ public class EventsBean implements Serializable {
 	}
 
 	/*
-	 * Support searching Events entities with pagination
+	 * Support searching Event entities with pagination
 	 */
 
 	private int page;
 	private long count;
-	private List<Events> pageItems;
+	private List<Event> pageItems;
 
-	private Events example = new Events();
+	private Event example = new Event();
 
 	public int getPage() {
 		return this.page;
@@ -164,11 +164,11 @@ public class EventsBean implements Serializable {
 		return 10;
 	}
 
-	public Events getExample() {
+	public Event getExample() {
 		return this.example;
 	}
 
-	public void setExample(Events example) {
+	public void setExample(Event example) {
 		this.example = example;
 	}
 
@@ -184,7 +184,7 @@ public class EventsBean implements Serializable {
 		// Populate this.count
 
 		CriteriaQuery<Long> countCriteria = builder.createQuery(Long.class);
-		Root<Events> root = countCriteria.from(Events.class);
+		Root<Event> root = countCriteria.from(Event.class);
 		countCriteria = countCriteria.select(builder.count(root)).where(
 				getSearchPredicates(root));
 		this.count = this.entityManager.createQuery(countCriteria)
@@ -192,16 +192,16 @@ public class EventsBean implements Serializable {
 
 		// Populate this.pageItems
 
-		CriteriaQuery<Events> criteria = builder.createQuery(Events.class);
-		root = criteria.from(Events.class);
-		TypedQuery<Events> query = this.entityManager.createQuery(criteria
+		CriteriaQuery<Event> criteria = builder.createQuery(Event.class);
+		root = criteria.from(Event.class);
+		TypedQuery<Event> query = this.entityManager.createQuery(criteria
 				.select(root).where(getSearchPredicates(root)));
 		query.setFirstResult(this.page * getPageSize()).setMaxResults(
 				getPageSize());
 		this.pageItems = query.getResultList();
 	}
 
-	private Predicate[] getSearchPredicates(Root<Events> root) {
+	private Predicate[] getSearchPredicates(Root<Event> root) {
 
 		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
 		List<Predicate> predicatesList = new ArrayList<Predicate>();
@@ -226,7 +226,7 @@ public class EventsBean implements Serializable {
 		return predicatesList.toArray(new Predicate[predicatesList.size()]);
 	}
 
-	public List<Events> getPageItems() {
+	public List<Event> getPageItems() {
 		return this.pageItems;
 	}
 
@@ -235,16 +235,16 @@ public class EventsBean implements Serializable {
 	}
 
 	/*
-	 * Support listing and POSTing back Events entities (e.g. from inside an
+	 * Support listing and POSTing back Event entities (e.g. from inside an
 	 * HtmlSelectOneMenu)
 	 */
 
-	public List<Events> getAll() {
+	public List<Event> getAll() {
 
-		CriteriaQuery<Events> criteria = this.entityManager
-				.getCriteriaBuilder().createQuery(Events.class);
+		CriteriaQuery<Event> criteria = this.entityManager.getCriteriaBuilder()
+				.createQuery(Event.class);
 		return this.entityManager.createQuery(
-				criteria.select(criteria.from(Events.class))).getResultList();
+				criteria.select(criteria.from(Event.class))).getResultList();
 	}
 
 	@Resource
@@ -252,8 +252,8 @@ public class EventsBean implements Serializable {
 
 	public Converter getConverter() {
 
-		final EventsBean ejbProxy = this.sessionContext
-				.getBusinessObject(EventsBean.class);
+		final EventBean ejbProxy = this.sessionContext
+				.getBusinessObject(EventBean.class);
 
 		return new Converter() {
 
@@ -272,7 +272,7 @@ public class EventsBean implements Serializable {
 					return "";
 				}
 
-				return String.valueOf(((Events) value).getId());
+				return String.valueOf(((Event) value).getId());
 			}
 		};
 	}
@@ -281,15 +281,15 @@ public class EventsBean implements Serializable {
 	 * Support adding children to bidirectional, one-to-many tables
 	 */
 
-	private Events add = new Events();
+	private Event add = new Event();
 
-	public Events getAdd() {
+	public Event getAdd() {
 		return this.add;
 	}
 
-	public Events getAdded() {
-		Events added = this.add;
-		this.add = new Events();
+	public Event getAdded() {
+		Event added = this.add;
+		this.add = new Event();
 		return added;
 	}
 }
